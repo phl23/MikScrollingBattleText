@@ -23,6 +23,15 @@ local string_find = string.find
 local string_format = string.format
 local string_match = string.match
 local GetSpellCooldown = GetSpellCooldown
+if (not GetSpellCooldown and C_Spell and C_Spell.GetSpellCooldown) then
+	GetSpellCooldown = function(spellID)
+		local info = C_Spell.GetSpellCooldown(spellID)
+		if (info) then
+			return info.startTime, info.duration, info.isEnabled, info.modRate
+		end
+	end
+end
+local GetItemCooldown = C_Container.GetItemCooldown
 local EraseTable = MikSBT.EraseTable
 local GetSkillName = MikSBT.GetSkillName
 local DisplayEvent = MikSBT.Animations.DisplayEvent
@@ -426,7 +435,7 @@ local function UseContainerItemHook(bag, slot)
 	if (not itemCooldownsEnabled) then return end
 
 	-- Get item id for the used bag and slot.
-	local itemID = GetContainerItemID(bag, slot)
+	local itemID = C_Container.GetContainerItemID(bag, slot)
 	if (itemID) then OnItemUse(itemID) end
 end
 
@@ -459,10 +468,14 @@ eventFrame:SetScript("OnUpdate", OnUpdate)
 _, playerClass = UnitClass("player")
 
 -- Setup hooks.
-hooksecurefunc("UseAction", UseActionHook)
-hooksecurefunc("UseInventoryItem", UseInventoryItemHook)
-hooksecurefunc("UseContainerItem", UseContainerItemHook)
-hooksecurefunc("UseItemByName", UseItemByNameHook)
+if (UseAction) then hooksecurefunc("UseAction", UseActionHook) end
+if (UseInventoryItem) then hooksecurefunc("UseInventoryItem", UseInventoryItemHook) end
+if (C_Container and C_Container.UseContainerItem) then
+	hooksecurefunc(C_Container, "UseContainerItem", UseContainerItemHook)
+elseif (UseContainerItem) then
+	hooksecurefunc("UseContainerItem", UseContainerItemHook)
+end
+if (UseItemByName) then hooksecurefunc("UseItemByName", UseItemByNameHook) end
 
 -- Specify the abilities that reset cooldowns.
 resetAbilities[SPELLID_COLD_SNAP] = true

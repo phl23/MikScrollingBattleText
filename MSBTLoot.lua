@@ -45,7 +45,7 @@ local SILVER = string_gsub(SILVER_AMOUNT, "%%d *", "")
 local COPPER = string_gsub(COPPER_AMOUNT, "%%d *", "")
 
 -- Localized name for item types.
-local ITEM_TYPE_QUEST = GetItemClassInfo(LE_ITEM_CLASS_QUESTITEM)
+local ITEM_TYPE_QUEST = C_Item.GetItemClassInfo(Enum.ItemClass.Questitem)
 
 
 -------------------------------------------------------------------------------

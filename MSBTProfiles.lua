@@ -10,6 +10,13 @@ MikSBT[moduleName] = module
 
 
 -------------------------------------------------------------------------------
+-- Compatibility constants.
+-------------------------------------------------------------------------------
+
+local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+local LoadAddOn = C_AddOns and C_AddOns.LoadAddOn or LoadAddOn
+
+-------------------------------------------------------------------------------
 -- Imports.
 -------------------------------------------------------------------------------
 
@@ -3251,19 +3258,30 @@ local function SetupBlizzardOptions()
 	frame.name = "MikScrollingBattleText"
 
 	-- Create an option button in the center of the frame to launch MSBT's options.
-	local button = CreateFrame("Button", nil, frame, "OptionsButtonTemplate")
+	local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	button:SetSize(120, 25)
 	button:SetPoint("CENTER")
 	button:SetText(MikSBT.COMMAND)
 	button:SetScript("OnClick",
 		function (this)
-			InterfaceOptionsFrameCancel_OnClick()
-			HideUIPanel(GameMenuFrame)
+			if (SettingsPanel and SettingsPanel.IsShown and SettingsPanel:IsShown()) then
+				SettingsPanel:Hide()
+			elseif (InterfaceOptionsFrameCancel_OnClick) then
+				InterfaceOptionsFrameCancel_OnClick()
+			end
+			if (GameMenuFrame) then HideUIPanel(GameMenuFrame) end
 			ShowOptions()
 		end
 	)
 
 	-- Add the frame as a new category to Blizzard's interface options.
-	InterfaceOptions_AddCategory(frame)
+	if (Settings and Settings.RegisterCanvasLayoutCategory) then
+		local category, layout = Settings.RegisterCanvasLayoutCategory(frame, frame.name, frame.name)
+		category.ID = frame.name
+		Settings.RegisterAddOnCategory(category)
+	else
+		InterfaceOptions_AddCategory(frame)
+	end
 end
 
 

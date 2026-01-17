@@ -15,6 +15,7 @@ _G[modName] = mod
 
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
 
+
 -------------------------------------------------------------------------------
 -- Imports.
 -------------------------------------------------------------------------------
