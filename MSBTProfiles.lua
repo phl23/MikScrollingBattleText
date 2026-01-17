@@ -3257,22 +3257,13 @@ local function SetupBlizzardOptions()
 	local frame = CreateFrame("Frame")
 	frame.name = "MikScrollingBattleText"
 
-	-- Create an option button in the center of the frame to launch MSBT's options.
-	local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	button:SetSize(120, 25)
-	button:SetPoint("CENTER")
-	button:SetText(MikSBT.COMMAND)
-	button:SetScript("OnClick",
-		function (this)
-			if (SettingsPanel and SettingsPanel.IsShown and SettingsPanel:IsShown()) then
-				SettingsPanel:Hide()
-			elseif (InterfaceOptionsFrameCancel_OnClick) then
-				InterfaceOptionsFrameCancel_OnClick()
-			end
-			if (GameMenuFrame) then HideUIPanel(GameMenuFrame) end
-			ShowOptions()
-		end
-	)
+	-- Create a text message telling the user how to open the options.
+	-- Note: A button to open options was removed because we cannot safely close the 
+	-- SettingsPanel from an addon in Dragonflight/10.x. It calls the protected function 
+	-- SpellStopCasting(), and attempts to Hide() it manually can break the ESC menu stack.
+	local text = frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	text:SetPoint("CENTER")
+	text:SetText("Type " .. MikSBT.COMMAND .. " to open the options.")
 
 	-- Add the frame as a new category to Blizzard's interface options.
 	if (Settings and Settings.RegisterCanvasLayoutCategory) then
