@@ -29,6 +29,7 @@ if (not GetSpellCooldown and C_Spell and C_Spell.GetSpellCooldown) then
 		if (info) then
 			return info.startTime, info.duration, info.isEnabled, info.modRate
 		end
+		return 0, 0, 0, 0
 	end
 end
 local GetItemCooldown = C_Container.GetItemCooldown
@@ -169,7 +170,7 @@ local function OnUpdateCooldown(cooldownType, cooldownFunc)
 	for cooldownID in pairs(delayedCooldowns[cooldownType]) do
 		-- Check if the cooldown is enabled yet.
 		local _, duration, enabled = cooldownFunc(cooldownID)
-		if (enabled == 1) then
+		if (enabled == 1 or enabled == true) then
 			-- Add the cooldown to the active cooldowns list if the cooldown is longer than the cooldown threshold or it's required to show.
 			local cooldownName = GetSpellInfo(cooldownID)
 			local ignoreCooldownThreshold = MSBTProfiles.currentProfile.ignoreCooldownThreshold
@@ -194,7 +195,7 @@ local function OnUpdateCooldown(cooldownType, cooldownFunc)
 	if (cooldownID) then
 		-- Make sure the spell cooldown is enabled.
 		local _, duration, enabled = cooldownFunc(cooldownID)
-		if (enabled == 1) then
+		if (enabled == 1 or enabled == true) then
 			-- XXX This is a hack to compensate for Blizzard's API reporting incorrect cooldown information for death knights.
 			-- XXX Ignore cooldowns that are the same duration as a rune cooldown except for the abilities that truly have the same cooldown.
 			if (playerClass == "DEATHKNIGHT" and duration == RUNE_COOLDOWN and cooldownType == "player" and not runeCooldownAbilities[cooldownID]) then duration = -1 end
