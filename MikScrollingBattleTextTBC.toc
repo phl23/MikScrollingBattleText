@@ -1,4 +1,4 @@
-## Interface: 20502
+## Interface: 20502, 20505
 ## Version: 6.0.0
 ## Title: Mik's Scrolling Battle Text - TBC Anniversary
 ## Author: Mikord / Fanupdate for TBC Anniversary by .phl
